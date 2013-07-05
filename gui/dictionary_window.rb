@@ -4,29 +4,32 @@ require 'glade_window'
 # DictionaryWindow is the main search and results window
 #
 class DictionaryWindow < GladeWindow
-	TEXTVIEW_TAGS = [
-		['indent', {:indent => 14}],
-		['header', {:scale => Pango::AttrScale::X_LARGE, :weight => Pango::FontDescription::WEIGHT_BOLD}],
-		['definition', {}],
-		['word-details', {:indent => 14, :style => Pango::FontDescription::STYLE_ITALIC}],
-		['word-type', {:style => Pango::FontDescription::STYLE_ITALIC}],
-		#['no-results', {:style => Pango::FontDescription::STYLE_ITALIC}],
-		['regular-conjugation', {}],
-		['irregular-conjugation', {:foreground => '#0000D0'}],
-		['tense', {:indent => 4, :scale => Pango::AttrScale::LARGE, :weight => Pango::FontDescription::WEIGHT_BOLD}],
-		['person', {:foreground => '#A8A8A8', :style => Pango::FontDescription::STYLE_ITALIC}],
-		['nulltag', {}],
-	]
-
 	def initialize(native_language, foreign_language)
 		super('dictionary_window', :widgets => [:preferences_button, :search_entry, :textview, :statusbar_label])
 
 		@native_language, @foreign_language = native_language, foreign_language
 
 		@buffer = @textview.buffer	# for easier access
-		TEXTVIEW_TAGS.each { |name, options| @buffer.create_tag(name,options) }
+
+		install_textview_formatting_tags
 
 		@preferences_button.signal_connect('clicked') { puts 'preferences' } #$preferences_window.present }
+	end
+
+	def install_textview_formatting_tags
+		[
+			['indent', {:indent => 14}],
+			['header', {:scale => Pango::AttrScale::LARGE, :weight => Pango::FontDescription::WEIGHT_BOLD}],
+			['definition', {}],
+			['word-details', {:indent => 14, :style => Pango::FontDescription::STYLE_ITALIC}],
+			['word-type', {:style => Pango::FontDescription::STYLE_ITALIC}],
+			#['no-results', {:style => Pango::FontDescription::STYLE_ITALIC}],
+			['regular-conjugation', {}],
+			['irregular-conjugation', {:foreground => '#0000D0'}],
+			['tense', {:indent => 4, :scale => Pango::AttrScale::MEDIUM, :weight => Pango::FontDescription::WEIGHT_BOLD}],
+			['person', {:foreground => '#A8A8A8', :style => Pango::FontDescription::STYLE_ITALIC}],
+			['nulltag', {}]
+		].each { |name, options| @buffer.create_tag(name,options) }
 	end
 
 	#

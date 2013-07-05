@@ -40,8 +40,14 @@ require 'language_spanish'
 #
 # Init GUI
 #
+puts 'Loading Gtk...'
 require 'gtk3'
 require 'addons'
+
+#
+# Create Windows
+#
+puts 'Creating Windows...'
 
 require 'dictionary_window'
 $dictionary_window = DictionaryWindow.new(LanguageEnglish.new, LanguageSpanish.new)

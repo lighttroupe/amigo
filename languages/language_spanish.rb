@@ -96,7 +96,7 @@ class LanguageSpanish < Language
 	###################################################################
 	# conjugate() - change an infinitive "hablar" to a specific tense/person conjugation like "hablo" (present tense, first person) using lookup tables
 	###################################################################
-	def self.conjugate(infinitive, tense, person)
+	def conjugate(infinitive, tense, person)
 		# remove 'se' if present
 		infinitive = infinitive[0, infinitive.length-2] if infinitive[infinitive.length-2, 2] == 'se'
 		infinitive = strip_accents(infinitive)
@@ -188,7 +188,7 @@ class LanguageSpanish < Language
 								buffer.insert(buffer.end_iter, irregular_conjugation.conjugation.to_s, 'indent', 'irregular-conjugation')
 							else
 								# this verb is regular in this tense
-								conjugation = self.class.conjugate(word.word, tense, person)
+								conjugation = conjugate(word.word, tense, person)
 								next if conjugation.nil?	# some tenses (eg. gerund) don't have all persons
 								buffer.insert(buffer.end_iter, conjugation, 'indent', 'regular-conjugation')
 							end
