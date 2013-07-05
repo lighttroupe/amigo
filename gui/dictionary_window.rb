@@ -29,10 +29,9 @@ class DictionaryWindow < GladeWindow
 		@preferences_button.signal_connect('clicked') { puts 'preferences' } #$preferences_window.present }
 	end
 
-	#def has_selection
-		#@search_entry.has_selection || @buffer.has_selection
-	#end
-
+	#
+	# Helpers
+	#
 	def set_statusbar_markup(markup)
 		@statusbar_label.markup = markup
 	end
@@ -42,6 +41,13 @@ class DictionaryWindow < GladeWindow
 		@foreign_language.render_results_to_textbuffer(results, @buffer)
 	end
 
+	#def has_selection
+		#@search_entry.has_selection || @buffer.has_selection
+	#end
+
+	#
+	# Gtk Callbacks
+	#
 	def on_search_entry_activate
 		search_term = @search_entry.text
 		results = @foreign_language.search(search_term)

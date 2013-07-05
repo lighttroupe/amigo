@@ -36,6 +36,7 @@ class Gtk::Entry
 	def has_selection
 		return selection_bounds != nil
 	end
+
 	def select_all
 		select_region(0, -1)
 	end
@@ -43,8 +44,11 @@ end
 
 class String
 	def limit(chars, indicator='...')
-		return self[0, chars] + indicator if length > chars
-		return self
+		if length > chars
+			self[0, chars] + indicator
+		else
+			self
+		end
 	end
 end
 
@@ -60,14 +64,9 @@ end
 
 def notify(options)
 	system("notify-send",
-		"--icon", File.join(Dir.pwd, ICON_PATH),											# icon
-		"--expire-time", (options[:timeout] || NOTIFICATION_EXPIRE_TIME).to_s, 	# expire time
-		"--urgency", (options[:urgency] || 'low'),								# urgency
-		(options[:summary] || APPLICATION_NAME).to_s,						# summary
-		(options[:body] || '').to_s);										# body
-
-# TODO: perhaps pop up next to mouse?  but what about keyboard selection?
-#		"--hint", "int:x:100",
-#		"--hint", "int:y:100",		
-
+		"--icon", File.join(Dir.pwd, ICON_PATH),
+		"--expire-time", (options[:timeout] || NOTIFICATION_EXPIRE_TIME).to_s,
+		"--urgency", (options[:urgency] || 'low'),
+		(options[:summary] || APPLICATION_NAME).to_s,
+		(options[:body] || '').to_s)
 end

@@ -2,6 +2,7 @@
 
 $LOAD_PATH << '.'
 $LOAD_PATH << 'models'
+$LOAD_PATH << 'languages'
 $LOAD_PATH << 'utils'
 $LOAD_PATH << 'gui'
 
@@ -41,6 +42,7 @@ require 'language_spanish'
 #
 require 'gtk3'
 require 'addons'
+
 require 'dictionary_window'
 $dictionary_window = DictionaryWindow.new(LanguageEnglish.new, LanguageSpanish.new)
 
