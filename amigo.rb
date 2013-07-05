@@ -1,11 +1,13 @@
 #!/usr/bin/ruby1.9.1
 
+DATABASE_FILENAME = 'amigo.db'
+
 #
 # Init Database
 #
 require 'active_record'
-ActiveRecord::Base.establish_connection(adapter:'sqlite3',database:'amigo.db')
 ActiveRecord::Base.logger = Logger.new(STDOUT)
+ActiveRecord::Base.establish_connection(adapter:'sqlite3',database:DATABASE_FILENAME)
 
 $LOAD_PATH << 'models'
 
