@@ -48,8 +48,10 @@ class DictionaryWindow < GladeWindow
 	#
 	# Gtk Callbacks
 	#
+
+	# user hits Enter in search box
 	def on_search_entry_activate
-		search_term = @search_entry.text
+		search_term = @search_entry.text.strip
 		results = @foreign_language.search(search_term)
 		if results.size > 0
 			set_statusbar_markup ""
