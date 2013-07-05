@@ -1,3 +1,5 @@
+require 'glade_window'
+
 #
 # DictionaryWindow is the main search and results window
 #
