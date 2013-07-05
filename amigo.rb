@@ -2,6 +2,11 @@
 
 DATABASE_FILENAME = 'amigo.db'
 
+# So this file can be run from anywhere
+Dir.chdir(File.dirname(File.expand_path(File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__)))		# So that this file can be run from anywhere
+
+require 'rubygems'		# required for gtk3 until it's available via apt-get
+
 #
 # Init Database
 #
@@ -17,13 +22,24 @@ require 'spanish_word'
 require 'english_word'
 require 'spanish_verb_conjugation'
 
-# puts SpanishWord.last.spanish_verb_conjugations.map(&:conjugation)
-puts SpanishWord.last.english_words.map(&:word)
-
 #
 # Init GUI
 #
+$LOAD_PATH << 'utils'
+$LOAD_PATH << 'gui'
+
+require 'gtk3'
+require 'glade_window'
+
+require 'dictionary_window'
+$dictionary_window = DictionaryWindow.new
 
 #
 # Run
 #
+begin
+	$dictionary_window.show
+	Gtk.main
+ensure
+	puts 'Shutdown...'
+end
