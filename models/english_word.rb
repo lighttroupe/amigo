@@ -6,8 +6,6 @@
 class EnglishWord < BaseModel
 	self.table_name = 'english_word'
 
-	attr_accessible :word, :type
-
 	has_many :spanish_english
 	has_many :spanish_words, :through => :spanish_english
 end

@@ -9,9 +9,9 @@ $LOAD_PATH << 'gui'
 DATABASE_FILENAME = 'amigo.db'
 
 # So this file can be run from anywhere
-Dir.chdir(File.dirname(File.expand_path(File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__)))		# So that this file can be run from anywhere
+Dir.chdir(File.dirname(File.expand_path(File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__)))
 
-require 'rubygems'		# required for gtk3 until it's available via apt-get
+require 'rubygems'		# required for latest gtk and activerecord until they're available via apt-get
 require 'logger'
 
 #

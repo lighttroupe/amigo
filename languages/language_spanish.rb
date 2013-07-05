@@ -63,15 +63,12 @@ class LanguageSpanish < Language
 		str.gsub(/á/u, 'a').gsub(/é/u, 'e').gsub(/í/u, 'i').gsub(/ó/u, 'o').gsub(/ú/u, 'u').gsub(/ñ/u, 'n')
 	end
 
-	#
 	# Search
-	#
 	def search(search_string)
 		results = []
 
-		#puts "searching: #{search_string}"
 		# real words (including verbs (infinitive form), nouns, pronouns, etc.)
-		SpanishWord.where(['word LIKE ?', search_string]).each { |word|
+		SpanishWord.search(search_string).each { |word|
 			results << {:word_type => word.type, :verb_tense => VERB_TENSE_INFINITIVE, :verb_person => VERB_PERSON_NONE, :word_id => word.id, :search => word.word}
 		}
 
@@ -93,9 +90,7 @@ class LanguageSpanish < Language
 		results
 	end
 
-	###################################################################
-	# conjugate() - change an infinitive "hablar" to a specific tense/person conjugation like "hablo" (present tense, first person) using lookup tables
-	###################################################################
+	# change an infinitive "hablar" to a specific tense/person conjugation like "hablo" (present tense, first person) using lookup tables
 	def conjugate(infinitive, tense, person)
 		# remove 'se' if present
 		infinitive = infinitive[0, infinitive.length-2] if infinitive[infinitive.length-2, 2] == 'se'
@@ -113,12 +108,11 @@ class LanguageSpanish < Language
 		end
 	end
 
-	###################################################################
-	# unconjugate() - take what MIGHT be a conjugated verb and yield possible infinitives
-	# most returned values are JUNK and so caller must check that:
+	# take what MIGHT be a conjugated verb and yield possible infinitives
+	#
+	# NOTE: most returned values are JUNK and so caller must check that:
 	#  1) the returned infinitive exists,
 	#  2) the verb isn't irregular in that tense/person
-	###################################################################
 	def unconjugate(conjugation)	# yields each possible | infinitive, tense, person |
 		REGULAR_CONJUGATIONS.each_key { | ar_er_ir |
 			REGULAR_CONJUGATIONS[ar_er_ir].each_index { | tense |
@@ -141,8 +135,7 @@ class LanguageSpanish < Language
 		}
 	end
 
-	# render_results_to_textbuffer - take an array of results (as created
-	#   by search() above) and output to a GTK TextBuffer
+	# take an array of results (as created by search) and output to a GTK TextBuffer
 	def render_results_to_textbuffer(results, buffer)
 		last_word_id = nil
 
@@ -209,10 +202,8 @@ class LanguageSpanish < Language
 		}
 	end
 
-	###################################################################
 	# render_results_to_notification() - take an array of results (as created
 	#   by search() above) and return text suitable for a notification balloon
-	###################################################################
 =begin
 	def render_results_to_notification(results)
 		last_word_id = nil

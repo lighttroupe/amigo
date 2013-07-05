@@ -29,7 +29,9 @@ class DictionaryWindow < GladeWindow
 			['tense', {:indent => 4, :scale => Pango::AttrScale::MEDIUM, :weight => Pango::FontDescription::WEIGHT_BOLD}],
 			['person', {:foreground => '#A8A8A8', :style => Pango::FontDescription::STYLE_ITALIC}],
 			['nulltag', {}]
-		].each { |name, options| @buffer.create_tag(name,options) }
+		].each { |name, options|
+			@buffer.create_tag(name, options)
+		}
 	end
 
 	#
@@ -40,7 +42,7 @@ class DictionaryWindow < GladeWindow
 	end
 
 	def set_results(results)
-		@textview.clear 		# NOTE: doesn't clear if there's nothing new to show
+		@textview.clear
 		@foreign_language.render_results_to_textbuffer(results, @buffer)
 	end
 
