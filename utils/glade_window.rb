@@ -59,7 +59,7 @@ class GladeWindow < DelegateClass(Gtk::Window)
 					end
 				rescue Exception => e
 					puts "Glade signal handler '#{handler_name}' caused exception:\n"
-					puts e.report
+					puts e
 				end
 			end
 		end_class_eval

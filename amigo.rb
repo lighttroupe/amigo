@@ -1,5 +1,10 @@
 #!/usr/bin/ruby1.9.1
 
+$LOAD_PATH << '.'
+$LOAD_PATH << 'models'
+$LOAD_PATH << 'utils'
+$LOAD_PATH << 'gui'
+
 DATABASE_FILENAME = 'amigo.db'
 
 # So this file can be run from anywhere
@@ -10,11 +15,20 @@ require 'rubygems'		# required for gtk3 until it's available via apt-get
 #
 # Init Database
 #
+puts 'gem activerecord'
+gem 'activerecord', '= 3.2.13'
+puts 'require activerecord'
 require 'active_record'
+puts 'require activesupport'
+require 'active_support'
+puts 'require logger'
+require 'logger'
+
+puts 'connect...'
 ActiveRecord::Base.logger = Logger.new(STDOUT)
 ActiveRecord::Base.establish_connection(adapter:'sqlite3',database:DATABASE_FILENAME)
 
-$LOAD_PATH << 'models'
+puts 'require models'
 
 require 'base_model'
 require 'spanish_english'		# joiner
@@ -22,17 +36,18 @@ require 'spanish_word'
 require 'english_word'
 require 'spanish_verb_conjugation'
 
+require 'language_english'
+require 'language_spanish'
+
 #
 # Init GUI
 #
-$LOAD_PATH << 'utils'
-$LOAD_PATH << 'gui'
-
 require 'gtk3'
 require 'glade_window'
+require 'addons'
 
 require 'dictionary_window'
-$dictionary_window = DictionaryWindow.new
+$dictionary_window = DictionaryWindow.new(LanguageEnglish.new, LanguageSpanish.new)
 
 #
 # Run

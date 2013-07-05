@@ -5,7 +5,6 @@
 #);
 class SpanishEnglish < BaseModel
 	self.table_name = 'spanish_english'
-	set_inheritance_column 'not_used'
 
 	belongs_to :english_word
 	belongs_to :spanish_word

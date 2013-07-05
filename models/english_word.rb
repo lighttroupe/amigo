@@ -5,7 +5,6 @@
 #);
 class EnglishWord < BaseModel
 	self.table_name = 'english_word'
-	set_inheritance_column 'not_used'
 
 	attr_accessible :word, :type
 

@@ -7,7 +7,6 @@
 #);
 class SpanishVerbConjugation < BaseModel
 	self.table_name = 'spanish_verb_conjugation'
-	set_inheritance_column 'not_used'
 
 	belongs_to :word, :class_name => 'SpanishWord'
 end
