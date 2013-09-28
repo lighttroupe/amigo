@@ -1,9 +1,31 @@
+# coding: utf-8
+
+###############################################################################
+#  Copyright 2013 Ian McIntosh <ian@openanswers.org>
+#
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU Library General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software
+#  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+###############################################################################
+
 require 'glade_window'
 
 #
 # DictionaryWindow is the main search and results window
 #
 class DictionaryWindow < GladeWindow
+	attr_reader :native_language, :foreign_language
+
 	def initialize(native_language, foreign_language)
 		super('dictionary_window', :widgets => [:preferences_button, :search_entry, :textview, :statusbar_label])
 
@@ -13,7 +35,11 @@ class DictionaryWindow < GladeWindow
 
 		install_textview_formatting_tags
 
-		@preferences_button.signal_connect('clicked') { puts 'preferences' } #$preferences_window.present }
+		@preferences_button.signal_connect('clicked') { $preferences_window.present }
+	end
+
+	def has_selection?
+		false
 	end
 
 	def install_textview_formatting_tags
@@ -50,6 +76,14 @@ class DictionaryWindow < GladeWindow
 		#@search_entry.has_selection || @buffer.has_selection
 	#end
 
+	def search(search_term)
+		@foreign_language.search(search_term)
+	end
+
+	def notification_summary
+		'notification_summary stub'
+	end
+
 	#
 	# Gtk Callbacks
 	#
@@ -57,7 +91,7 @@ class DictionaryWindow < GladeWindow
 	# user hits Enter in search box
 	def on_search_entry_activate
 		search_term = @search_entry.text.strip
-		results = @foreign_language.search(search_term)
+		results = search(search_term)
 		if results.size > 0
 			set_statusbar_markup ""
 			set_results(results)
