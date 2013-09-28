@@ -32,20 +32,21 @@ DATABASE_FILENAME = 'amigo.db'
 Dir.chdir(File.dirname(File.expand_path(File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__)))
 
 require 'rubygems'		# required for latest gtk and activerecord until they're available via apt-get
-require 'logger'
 
-#
-# Init Database
-#
+#require 'logger'
+#puts 'Creating Logger...'
+#ActiveRecord::Base.logger = Logger.new(STDOUT)
+
+puts 'Loading Gtk...'
+require 'gtk3'
+require 'addons'
+
 puts 'Loading ActiveRecord...'
 gem 'activerecord', '= 3.2.13'
 require 'active_record'
 
-#puts 'Creating Logger...'
-#ActiveRecord::Base.logger = Logger.new(STDOUT)
-
 puts 'Opening Database...'
-ActiveRecord::Base.establish_connection(adapter:'sqlite3',database:DATABASE_FILENAME)
+ActiveRecord::Base.establish_connection(:adapter => 'sqlite3', :database => DATABASE_FILENAME)
 
 #
 # Init Languages
@@ -60,39 +61,14 @@ require 'language_english'
 require 'language_spanish'
 
 #
-# Init GUI
-#
-puts 'Loading Gtk...'
-require 'gtk3'
-require 'addons'
-
-#
-# Create Windows
-#
-puts 'Creating Windows...'
-
-require 'dictionary_window'
-require 'preferences_window'
-require 'mouse_selection_watcher'
-
-class Application
-	def initialize
-		@dictionary_window = DictionaryWindow.new(LanguageEnglish.new, LanguageSpanish.new)
-		@dictionary_window.show
-
-		@mouse_selection_watcher = MouseSelectionWatcher.new.on_selection { |text|
-			@dictionary_window.on_receive_text_selection(text)
-		}
-	end
-end
-
-#
 # Run
 #
+require 'application'
+
 begin
 	puts 'Running...'
-	app = Application.new
-	Gtk.main
+	$application = Application.new(LanguageEnglish.new, LanguageSpanish.new)
+	$application.run
 ensure
 	puts 'Shutdown...'
 end
