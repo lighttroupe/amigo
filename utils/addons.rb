@@ -61,14 +61,3 @@ class Gtk::Window
 		end
 	end
 end
-
-def notify(options)
-	options = {:urgency => 'low', :timeout => 5000}.merge(options)
-
-	system("notify-send",
-		#"--icon", File.join(Dir.pwd, ICON_PATH),
-		"--expire-time", options[:timeout].to_s,
-		"--urgency", (options[:urgency] || 'low'),
-		options[:summary].to_s,
-		options[:body].to_s)
-end

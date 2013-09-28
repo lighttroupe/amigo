@@ -29,19 +29,92 @@ class DictionaryWindow < GladeWindow
 	def initialize(native_language, foreign_language)
 		super('dictionary_window', :widgets => [:preferences_button, :search_entry, :textview, :statusbar_label])
 
+		# Language
 		@native_language, @foreign_language = native_language, foreign_language
 
+		# Output
 		@buffer = @textview.buffer	# for easier access
-
 		install_textview_formatting_tags
 
-		@preferences_button.signal_connect('clicked') { $preferences_window.present }
+		# Preferences
+		@preferences_window = PreferencesWindow.new
+		@preferences_button.signal_connect('clicked') { @preferences_window.present }
+	end
+
+	#
+	# Helpers
+	#
+	def set_statusbar_markup(markup)
+		@statusbar_label.markup = markup
+	end
+
+	def set_results(results)
+		@textview.clear
+		@foreign_language.render_results_to_textbuffer(results, @buffer)
 	end
 
 	def has_selection?
-		false
+		@search_entry.has_selection || @buffer.has_selection
 	end
 
+	def send_notification(options)
+		options = {:urgency => 'low', :timeout => 3000}.merge(options)
+
+		system("notify-send",
+			#"--icon", File.join(Dir.pwd, ICON_PATH),
+			"--expire-time", options[:timeout].to_s,
+			"--urgency", options[:urgency].to_s,
+			options[:summary].to_s,
+			options[:body].to_s)
+	end
+
+	def notification_summary
+		'notification_summary stub'
+	end
+
+	#
+	# Gtk Callbacks
+	#
+	def on_search_entry_activate		# user hits Enter in search box
+		search_term = @search_entry.text.strip
+		results = @foreign_language.search(search_term)
+		if results.size > 0
+			set_results(results)
+			set_statusbar_markup ""
+		else
+			set_statusbar_markup "<i>No results for <b>#{search_term}</b></i>"
+		end
+	end
+
+	#
+	# App Callback
+	#
+	def on_receive_text_selection(text)
+		# don't respond to selections in our own window(s)
+		return if has_selection? || @preferences_window.has_selection?
+
+		# be friendlier to mouse-cowboys (remove junk characters in selection)
+		text = @foreign_language.class.clean_string(text)
+
+		# the text we get from the clipboard seems to be in ASCII8
+		# convert to UTF8, which later regular expressions expect
+		# TODO: move this above
+		text.force_encoding('UTF-8') if text.respond_to? :force_encoding
+
+		# We can ignore garbage
+		return unless @foreign_language.class.resembles_word(text)
+
+		# Search for word
+		text = @foreign_language.class.downcase(text)
+		if @foreign_language.search(text)		# something found?
+			send_notification(:summary => text, :body => '', :timeout => 10000, :urgency => 'low')		#if $preferences_window.show_notifications_checkbutton.active?
+			self.urgency_hint = true
+		end
+	end
+
+	#
+	# Gtk setup
+	#
 	def install_textview_formatting_tags
 		[
 			['indent', {:indent => 14}],
@@ -58,45 +131,5 @@ class DictionaryWindow < GladeWindow
 		].each { |name, options|
 			@buffer.create_tag(name, options)
 		}
-	end
-
-	#
-	# Helpers
-	#
-	def set_statusbar_markup(markup)
-		@statusbar_label.markup = markup
-	end
-
-	def set_results(results)
-		@textview.clear
-		@foreign_language.render_results_to_textbuffer(results, @buffer)
-	end
-
-	#def has_selection
-		#@search_entry.has_selection || @buffer.has_selection
-	#end
-
-	def search(search_term)
-		@foreign_language.search(search_term)
-	end
-
-	def notification_summary
-		'notification_summary stub'
-	end
-
-	#
-	# Gtk Callbacks
-	#
-
-	# user hits Enter in search box
-	def on_search_entry_activate
-		search_term = @search_entry.text.strip
-		results = search(search_term)
-		if results.size > 0
-			set_statusbar_markup ""
-			set_results(results)
-		else
-			set_statusbar_markup "<i>No results for #{search_term}</i>"
-		end
 	end
 end

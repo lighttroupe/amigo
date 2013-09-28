@@ -72,17 +72,26 @@ require 'addons'
 puts 'Creating Windows...'
 
 require 'dictionary_window'
-$dictionary_window = DictionaryWindow.new(LanguageEnglish.new, LanguageSpanish.new)
-
 require 'preferences_window'
-$preferences_window = PreferencesWindow.new
+require 'mouse_selection_watcher'
+
+class Application
+	def initialize
+		@dictionary_window = DictionaryWindow.new(LanguageEnglish.new, LanguageSpanish.new)
+		@dictionary_window.show
+
+		@mouse_selection_watcher = MouseSelectionWatcher.new.on_selection { |text|
+			@dictionary_window.on_receive_text_selection(text)
+		}
+	end
+end
 
 #
 # Run
 #
 begin
 	puts 'Running...'
-	$dictionary_window.show
+	app = Application.new
 	Gtk.main
 ensure
 	puts 'Shutdown...'
